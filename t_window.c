@@ -100,7 +100,7 @@ void	CR_draw_line(t_window *w, t_vec2i *p0, t_vec2i *p1, float v)
 	} else {
 		float a = (float) dx / (float) dy;
 		float b = - a * (float) p0->y + (float) p0->x;
-		for (int k = min(p0->y, p1->y); k <= max(p0->y, p0->y); k++)
+		for (int k = min(p0->y, p1->y); k <= max(p0->y, p1->y); k++)
 			CR_draw(w, &(t_vec2i) {(int) round(a * (float) k + b), k}, v);
 	}
 }
