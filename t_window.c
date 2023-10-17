@@ -21,13 +21,20 @@ int max(int a, int b) {
 	return (a > b) ? a : b;
 }
 
-void	CR_set_cursor_pos(int x, int y)
+void	normalize(t_window *w, t_vec2i *v, t_vec2 *out)
 {
-	printf("\033[%d;%dH", y, x);
+	out->x = ((float) v->x / (float) w->width) * 2.0f - 1.0f;
+	out->y = ((float) v->y / (float) w->height) * 2.0f - 1.0f;
 }
 
-int CR_unnormalize(t_window *w, float x, char c) {
-	return (int) round((x / 2.0f + 0.5f) * ((c == 'h') ? w->height : w->width));
+void	unnormalize(t_window *w, t_vec2 *v, t_vec2i *out) {
+	out->x = (int) round((v->x / 2.0f + 0.5f) * (float) w->width);
+	out->y = (int) round((v->y / 2.0f + 0.5f) * (float) w->height);
+}
+
+int		pos_to_index(t_window *w, t_vec2i *p)
+{
+	return p->y * (w->width + 1) + p->x;
 }
 
 t_window	*CR_new_window(int w, int h)
@@ -53,63 +60,71 @@ void	CR_present(t_window *w)
 	printf("%s", w->buffer);
 }
 
-void	CR_write(t_window *w, int x, int y, char *str)
+void	CR_write(t_window *w, t_vec2i *p, char *str)
 {
-	for (int k = 0; str[k] && k + x < w->width; k++)
-		w->buffer[y * (w->width + 1) + x + k] = str[k];
+	for (int k = 0; str[k] && k + p->x < w->width; k++)
+		w->buffer[pos_to_index(w, p) + k] = str[k];
 }
 
-void	CR_writef(t_window *w, float x, float y, char *str)
+void	CR_writef(t_window *w, t_vec2 *p, char *str)
 {
-	CR_write(w, CR_unnormalize(w, x, 'w'), CR_unnormalize(w, y, 'h'), str);
+	t_vec2i pi;
+	unnormalize(w, p, &pi);
+	CR_write(w, &pi, str);
 }
 
-void	CR_draw(t_window *w, int x, int y, float v)
+void	CR_draw(t_window *w, t_vec2i *p, float v)
 {
-	if (x < 0 || x >= w->width || y < 0 || y >= w->height)
+	if (p->x < 0 || p->x >= w->width || p->y < 0 || p->y >= w->height)
 		return;
 	int index = (int) round((1.0f - v) * ((float) strlen(w->palette) - 1.0f));
-	w->buffer[y * (w->width + 1) + x] = w->palette[index];
+	w->buffer[pos_to_index(w, p)] = w->palette[index];
 }
 
-void	CR_drawf(t_window *w, float x, float y, float v)
+void	CR_drawf(t_window *w, t_vec2 *p, float v)
 {
-	CR_draw(w, CR_unnormalize(w, x, 'w'), CR_unnormalize(w, y, 'h'), v);
+	t_vec2i pi;
+	unnormalize(w, p, &pi);
+	CR_draw(w, &pi, v);
 }
 
-void	CR_draw_line(t_window *w, int x0, int y0, int x1, int y1, float v)
+void	CR_draw_line(t_window *w, t_vec2i *p0, t_vec2i *p1, float v)
 {
-	int dx = x1 - x0; //64
-	int dy = y1 - y0; // 0
+	int dx = p1->x - p0->x;
+	int dy = p1->y - p0->y;
 	if (abs(dx) > abs(dy)) {
-		float a = (float) dy / (float) dx; //0
-		float b = - a * (float) x0 + (float) y0; 
-		for (int k = min(x0, x1); k <= max(x0, x1); k++) {
-			CR_draw(w, k,(int) round(a * (float) k + b), v);
-		}
+		float a = (float) dy / (float) dx;
+		float b = - a * (float) p0->x + (float) p0->y;
+		for (int k = min(p0->x, p1->x); k <= max(p0->x, p1->x); k++)
+			CR_draw(w, &(t_vec2i) {k, (int) round(a * (float) k + b)}, v);
 	} else {
 		float a = (float) dx / (float) dy;
-		float b = - a * (float) y0 + (float) x0;
-		for (int k = min(y0, y1); k <= max(y0, y1); k++) {
-			//printf("llop %d %d %d %d\n", y0, y1, max(y0, y1), k);
-			CR_draw(w, (int) round(a * (float) k + b), k, v);
-		}
+		float b = - a * (float) p0->y + (float) p0->x;
+		for (int k = min(p0->y, p1->y); k <= max(p0->y, p0->y); k++)
+			CR_draw(w, &(t_vec2i) {(int) round(a * (float) k + b), k}, v);
 	}
 }
 
-void	CR_draw_linef(t_window *w, float x0, float y0, float x1, float y1, float v)
+void	CR_draw_linef(t_window *w, t_vec2 *p0, t_vec2 *p1, float v)
 {
-	CR_draw_line(w, CR_unnormalize(w, x0, 'w'), CR_unnormalize(w, y0, 'h'), CR_unnormalize(w, x1, 'w'), CR_unnormalize(w, y1, 'h'), v);
+	t_vec2i pi0, pi1;
+	unnormalize(w, p0, &pi0);
+	unnormalize(w, p1, &pi1);
+	CR_draw_line(w, &pi0, &pi1, v);
 }
 
-void	CR_draw_triangle(t_window *w, int x0, int y0, int x1, int y1, int x2, int y2, float v)
+void	CR_draw_triangle(t_window *w, t_vec2i *p0, t_vec2i *p1, t_vec2i *p2, float v)
 {
-	CR_draw_line(w, x0, y0, x1, y1, v);
-	CR_draw_line(w, x1, y1, x2, y2, v);
-	CR_draw_line(w, x2, y2, x0, y0, v);
+	CR_draw_line(w, p0, p1, v);
+	CR_draw_line(w, p1, p2, v);
+	CR_draw_line(w, p2, p0, v);
 }
 
-void	CR_draw_trianglef(t_window *w, float x0, float y0, float x1, float y1, float x2, float y2, float v)
+void	CR_draw_trianglef(t_window *w, t_vec2 *p0, t_vec2 *p1, t_vec2 *p2, float v)
 {
-	CR_draw_triangle(w, CR_unnormalize(w, x0, 'w'), CR_unnormalize(w, y0, 'h'), CR_unnormalize(w, x1, 'w'), CR_unnormalize(w, y1, 'h'), CR_unnormalize(w, x2, 'w'), CR_unnormalize(w, y2, 'h'), v);
+	t_vec2i pi0, pi1, pi2;
+	unnormalize(w, p0, &pi0);
+	unnormalize(w, p1, &pi1);
+	unnormalize(w, p2, &pi2);
+	CR_draw_triangle(w, &pi0, &pi1, &pi2, v);
 }
