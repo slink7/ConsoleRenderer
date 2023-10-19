@@ -56,8 +56,7 @@ void	CR_clear(t_window *w, char c)
 
 void	CR_present(t_window *w)
 {
-	printf("\e[1;1H\e[2J");
-	printf("%s", w->buffer);
+	printf("\e[1;1H\e[2J%s", w->buffer);
 }
 
 void	CR_write(t_window *w, t_vec2i *p, char *str)
