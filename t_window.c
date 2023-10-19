@@ -73,6 +73,20 @@ void	CR_writef(t_window *w, t_vec2 *p, char *str)
 	CR_write(w, &pi, str);
 }
 
+void	CR_write_centered(t_window *w, t_vec2i *p, char *str)
+{
+	int len = strlen(str);
+	for (int k = 0; str[k] && k + p->x < w->width; k++)
+		w->buffer[pos_to_index(w, p) + k - len / 2] = str[k];
+}
+
+void	CR_write_centeredf(t_window *w, t_vec2 *p, char *str)
+{
+	t_vec2i pi;
+	unnormalize(w, p, &pi);
+	CR_write_centered(w, &pi, str);
+}
+
 void	CR_draw(t_window *w, t_vec2i *p, float v)
 {
 	if (p->x < 0 || p->x >= w->width || p->y < 0 || p->y >= w->height)
