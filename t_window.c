@@ -142,3 +142,38 @@ void	CR_draw_trianglef(t_window *w, t_vec2 *p0, t_vec2 *p1, t_vec2 *p2, float v)
 	unnormalize(w, p2, &pi2);
 	CR_draw_triangle(w, &pi0, &pi1, &pi2, v);
 }
+
+float det2(t_vec2i *a, t_vec2i *b)
+{
+	return (a->x * b->y - a->y * b->x);
+}
+
+void	CR_fill_triangle(t_window *w, t_vec2i *p0, t_vec2i *p1, t_vec2i *p2, float va)
+{
+	t_vec2i min_vec = (t_vec2i) {min(p0->x, min(p1->x, p2->x)), min(p0->y, min(p1->y, p2->y))};
+	t_vec2i max_vec = (t_vec2i) {max(p0->x, max(p1->x, p2->x)), max(p0->y, max(p1->y, p2->y))};
+	t_vec2i vp;
+	for (vp.x = min_vec.x; vp.x <= max_vec.x; vp.x++)
+	{
+		for (vp.y = min_vec.y; vp.y <= max_vec.y; vp.y++)
+		{
+			t_vec2i v = {vp.x, vp.y};
+			t_vec2i v0 = { p0->x, p0->y };
+			t_vec2i v1 = { p1->x - p0->x, p1->y - p0->y };
+			t_vec2i v2 = { p2->x - p0->x, p2->y - p0->y };
+			float a = (det2(&v, &v2) - det2(&v0, &v2)) / det2(&v1, &v2);
+			float b = -(det2(&v, &v1) - det2(&v0, &v1)) / det2(&v1, &v2);
+			if (a + b <= 1.0f && a >= 0.0f && b >= 0.0f)
+				CR_draw(w, &vp, va);
+		}
+	}
+}	
+
+void	CR_fill_trianglef(t_window *w, t_vec2 *p0, t_vec2 *p1, t_vec2 *p2, float va)
+{
+	t_vec2i pi0, pi1, pi2;
+	unnormalize(w, p0, &pi0);
+	unnormalize(w, p1, &pi1);
+	unnormalize(w, p2, &pi2);
+	CR_fill_triangle(w, &pi0, &pi1, &pi2, va);
+}

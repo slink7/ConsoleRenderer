@@ -35,5 +35,7 @@ void		CR_draw_line(t_window *w, t_vec2i *p0, t_vec2i *p1, float v);
 void		CR_draw_linef(t_window *w, t_vec2 *p0, t_vec2 *p1, float v);
 void		CR_draw_triangle(t_window *w, t_vec2i *p0, t_vec2i *p1, t_vec2i *p2, float v);
 void		CR_draw_trianglef(t_window *w, t_vec2 *p0, t_vec2 *p1, t_vec2 *p2, float v);
+void		CR_fill_triangle(t_window *w, t_vec2i *p0, t_vec2i *p1, t_vec2i *p2, float va);
+void		CR_fill_trianglef(t_window *w, t_vec2 *p0, t_vec2 *p1, t_vec2 *p2, float va);
 
 #endif
