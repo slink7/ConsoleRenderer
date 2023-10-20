@@ -1,34 +1,41 @@
 
-LIB_PATH = lib
-LIB = libcr.a
+#Parameters
+OUT_PATH = out
+OUT = libcr.a
+
+INC_PATH = inc 
 
 SRC_PATH = src
-SRC = $(shell find src/ -type f -name "*.c")
+SRC = $(shell find $(SRC_PATH)/ -type f -name "*.c")
 
 OBJ_PATH = obj
 OBJ = $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
 
 CSFLAGS = -Wall -Wextra -Werror
 
-all : $(LIB)
-
+#Folder Cration
 $(OBJ_PATH) :
 	mkdir $(OBJ_PATH)
+$(OUT_PATH) :
+	mkdir $(OUT_PATH)
 
+#Actual compiling and linking
 $(OBJ_PATH)/%.o : $(SRC_PATH)/%.c
-	cc $(CSFLAGS) -o  $@ -c $< -Iinc/
+	cc $(CSFLAGS) -o  $@ -c $< $(addprefix -I, $(addsuffix /, $(INC_PATH)))
+$(OUT_PATH)/$(OUT) : $(OUT_PATH) $(OBJ_PATH) $(OBJ)
+	ar rc  $(OUT_PATH)/$(OUT)  $(OBJ)
+	ranlib $(OUT_PATH)/$(OUT)
 
-$(LIB) : $(OBJ_PATH) $(OBJ)
-	ar rc  $(LIB)  $(OBJ)
-	ranlib $(LIB)
+#Useful targets
+all : $(OUT_PATH)/$(OUT)
 
 clean :
 	rm -f $(OBJ)
 	rmdir $(OBJ_PATH)
 
-
 fclean : clean
-	rm -f $(LIB)
+	rm -f $(OUT_PATH)/$(OUT)
+	rmdir $(OUT_PATH)
 
 re : fclean all
 	

@@ -53,4 +53,5 @@ dkms.conf
 
 lib/
 obj/
+out/
 main.c
