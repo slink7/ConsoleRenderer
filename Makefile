@@ -13,6 +13,8 @@ OBJ = $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
 
 CSFLAGS = -Wall -Wextra -Werror
 
+default : all
+
 #Folder Cration
 $(OBJ_PATH) :
 	mkdir $(OBJ_PATH)
