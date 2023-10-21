@@ -40,4 +40,7 @@ fclean : clean
 	rmdir $(OUT_PATH)
 
 re : fclean all
-	
+
+#Testing purpose
+main : all
+	cc main.c -L./out/ -lcr -lm -Iinc
