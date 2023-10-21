@@ -23,6 +23,7 @@ typedef struct s_window
 }	t_window;
 
 t_window	*CR_new_window(int w, int h);
+void		CR_free_window(t_window **w);
 void		CR_clear(t_window *w, char c);
 void		CR_present(t_window *w);
 void		CR_write(t_window *w, t_vec2i *p, char *str);

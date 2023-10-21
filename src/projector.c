@@ -57,8 +57,8 @@ void	matrix_proj(t_vec3 *a, t_matrix *m, t_vec3 *out)
 	out->x = (a->x * (*m)[0][0] + a->y * (*m)[1][0] + a->z * (*m)[2][0] + (*m)[3][0]);
 	out->y = (a->x * (*m)[0][1] + a->y * (*m)[1][1] + a->z * (*m)[2][1] + (*m)[3][1]);
 	out->z = (a->x * (*m)[0][2] + a->y * (*m)[1][2] + a->z * (*m)[2][2] + (*m)[3][2]);
-	float w =(a->x * (*m)[0][3] + a->y * (*m)[1][3] + a->z * (*m)[2][3] + (*m)[3][3]);
-
+	float w = (a->x * (*m)[0][3] + a->y * (*m)[1][3] + a->z * (*m)[2][3] + (*m)[3][3]);
+	
 	if (w != 0.0f) {
 		out->x /= w;
 		out->y /= w;
@@ -98,8 +98,8 @@ void	CR_proj(t_window *w, t_object *o)
 	float ar = (float) w->height / (float) w->width;
 	float fov_rad = 1.0f / tanf(fov * 0.5f );
 
-	t_matrix proj;
-	
+	t_matrix proj = {{0.0f}};
+
 	t_vec3 light_dir = { -sqrt(2.0f) / 2.0f, 0.0f, -sqrt(2.0f) / 2.0f };
 
 	proj[0][0] = ar * fov_rad;
@@ -119,7 +119,12 @@ void	CR_proj(t_window *w, t_object *o)
 		t_vec3 triZYX[3] = { {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
 		t_vec3 triZYXT[3] = { {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}};
 		for (int l = 0; l < 3; l++) {
-			t_matrix m;
+			t_matrix m = {
+				{0.0f, 0.0f, 0.0f, 0.0f},
+				{0.0f, 0.0f, 0.0f, 0.0f},
+				{0.0f, 0.0f, 0.0f, 0.0f},
+				{0.0f, 0.0f, 0.0f, 0.0f}
+			};
 			set_rot_matrix_Z(&m, o->rot.z);
 			matrix_proj(&o->mesh.vertices[o->mesh.triangles[3 * k + l]], &m, &triZ[l]);
 			set_rot_matrix_Y(&m, o->rot.y);

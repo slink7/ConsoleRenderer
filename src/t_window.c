@@ -48,6 +48,13 @@ t_window	*CR_new_window(int w, int h)
 	return out;
 }
 
+void	CR_free_window(t_window **w)
+{
+	free((*w)->buffer);
+	free(*w);
+	*w = 0;
+}
+
 void	CR_clear(t_window *w, char c)
 {
 	for (int k = 0; k < (w->width + 1) * (w->height); k++)
@@ -56,7 +63,8 @@ void	CR_clear(t_window *w, char c)
 
 void	CR_present(t_window *w)
 {
-	printf("\e[1;1H\e[2J%s", w->buffer);
+	write(1, "\e[1;1H\e[2J", 10);
+	write(1, w->buffer, (w->width + 1) * w->height);
 }
 
 void	CR_write(t_window *w, t_vec2i *p, char *str)
@@ -72,9 +80,19 @@ void	CR_writef(t_window *w, t_vec2 *p, char *str)
 	CR_write(w, &pi, str);
 }
 
+int ft_strlen(char *str)
+{
+	int k;
+
+	k = 0;
+	while (*(str + k))
+		k++;
+	return (k);
+}
+
 void	CR_write_centered(t_window *w, t_vec2i *p, char *str)
 {
-	int len = strlen(str);
+	int len = ft_strlen(str);
 	for (int k = 0; str[k] && k + p->x < w->width; k++)
 		w->buffer[pos_to_index(w, p) + k - len / 2] = str[k];
 }
