@@ -44,3 +44,6 @@ re : fclean all
 #Testing purpose
 main : all
 	cc main.c -L./out/ -lcr -lm -Iinc
+
+debug :
+	cc main.c src/*.c -g3 -L./out/ -lcr -lm -Iinc
