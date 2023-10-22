@@ -11,7 +11,7 @@ typedef struct s_link
 
 t_link	*create_link(void *data);
 void	free_link(t_link **link);
-void	print_link(t_link *link, char *format);
+void	print_link(t_link *link);
 void	push_back_link(t_link **link, void *data);
 void	push_front_link(t_link **link, void *data);
 void	*get_at_link(t_link *link, int i);

@@ -19,13 +19,13 @@ void	free_link(t_link **link)
 	free(*link);
 }
 
-void	print_link(t_link *link, char *format)
+void	print_link(t_link *link)
 {
 	if (!link) return;
 	printf("[%ld]", (long) link->data);
 	if (link->next) {
 		printf("->");
-		print_link(link->next, format);
+		print_link(link->next);
 	}
 	else
 		printf("\n");
