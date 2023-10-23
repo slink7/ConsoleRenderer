@@ -27,8 +27,9 @@ typedef struct s_object
 
 typedef float t_matrix[4][4];
 
-void 	free_mesh(t_mesh *obj)
-void 	free_object(t_object *obj)
-void	CR_proj(t_window *w, t_object *o, int draw_edges);
+void 		free_mesh(t_mesh *obj);
+void 		free_object(t_object *obj);
+t_object	*read_obj(char *path);
+void		CR_proj(t_window *w, t_object *o, int draw_edges);
 
 #endif

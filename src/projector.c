@@ -2,6 +2,8 @@
 #include <math.h>
 #include <stdio.h>
 
+#include "t_linked_list.h"
+#include "file.h"
 #include "projector.h"
 #include "t_window.h"
 
@@ -16,6 +18,64 @@ void free_object(t_object *obj)
 	free(obj->mesh.triangles);
 	free(obj->mesh.vertices);
 	free(obj);
+}
+
+t_object	*read_obj(char *path)
+{
+	char *file = get_file(path);
+	int index = 0;
+	t_link *vertices = 0;
+	t_link *triangles = 0;
+	while (file[index])
+	{
+		if (file[index] == 'v') {
+			t_vec3 *v = malloc(sizeof(t_vec3));
+			int vi = 0;
+			while (file[++index] != '\n')
+				if (vi < 3 && (file[index] >= '0' && file[index] <= '9' || file[index] == '-') && file[index - 1] == ' ')
+					switch (vi++) {
+						case 0 : v->x = (float) atof(&file[index]); break;
+						case 1 : v->y = (float) atof(&file[index]); break;
+						case 2 : v->z = (float) atof(&file[index]); break;
+					}
+			push_back_link(&vertices, (void *)v);
+		}
+		if (file[index] == 'f')
+			while (file[++index] != '\n')
+				if (file[index] >= '0' && file[index] <= '9' && file[index - 1] == ' ')
+				{
+					int *v = malloc(sizeof(int));
+					*v = atoi(&file[index]);
+					push_back_link(&triangles, (void *)v);
+				}
+		index++;
+	}
+	free(file);
+	t_object *out = malloc(sizeof(t_object));
+
+	out->mesh.vertices_count = get_length_link(vertices);
+	t_vec3 **tempv = (t_vec3**)to_array_link(vertices);
+	free_link(&vertices);
+	out->mesh.vertices = malloc(sizeof(t_vec3) * out->mesh.vertices_count);
+	for (int k = 0; k < out->mesh.vertices_count; k++) {
+		out->mesh.vertices[k] = (t_vec3) { tempv[k]->x, tempv[k]->y, tempv[k]->z };
+		free(tempv[k]);
+	}
+	free(tempv);
+
+	out->mesh.triangle_count = get_length_link(triangles) / 3;
+	int **tempt = (int**)to_array_link(triangles);
+	free_link(&triangles);
+	out->mesh.triangles = malloc(sizeof(int) * out->mesh.triangle_count * 3);
+	for (int k = 0; k < out->mesh.triangle_count * 3; k++) {
+		out->mesh.triangles[k] = *(tempt[k]) - 1;
+		free(tempt[k]);
+	}
+	free(tempt);
+
+	out->pos = (t_vec3){ 0.0f, 0.0f, 0.0f };
+	out->rot = (t_vec3){ 0.0f, 0.0f, 0.0f };
+	return out;
 }
 
 void	print_matrix(t_matrix *m)
