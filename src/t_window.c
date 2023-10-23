@@ -40,7 +40,7 @@ int		pos_to_index(t_window *w, t_vec2i *p)
 t_window	*CR_new_window(int w, int h)
 {
 	t_window *out = malloc(sizeof(t_window));
-	out->palette = "@#W$9876543210?!abc;:+=-,._ "; //ertdfgcvb
+	out->palette = "@$089W#b654321ac?!;:+=_-,. "; //ertdfgcvb
 	out->width = w;
 	out->height = h;
 	out->buffer = malloc(sizeof(char) * (out->width + 1) * (out->height));
