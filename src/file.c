@@ -22,9 +22,10 @@ char	*get_file(char *path)
 	int fd = open(path, O_RDONLY);
 	if (fd < 1)
 		return 0;
-	char *out = malloc(len);
+	char *out = malloc(len + 1);
 	if (out)
 		read(fd, out, len);
+	out[len] = '\0';
 	close(fd);
 	return out;
 }
