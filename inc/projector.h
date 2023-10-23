@@ -27,6 +27,6 @@ typedef struct s_object
 
 typedef float t_matrix[4][4];
 
-void	CR_proj(t_window *w, t_object *o);
+void	CR_proj(t_window *w, t_object *o, int draw_edges);
 
 #endif

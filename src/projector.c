@@ -90,7 +90,7 @@ float	vec_length(t_vec3 *A)
 	return sqrtf(A->x * A->x + A->y * A->y + A->z * A->z);
 }
 
-void	CR_proj(t_window *w, t_object *o)
+void	CR_proj(t_window *w, t_object *o, int draw_edges)
 {
 	float ncp = 0.1f;
 	float fcp = 10000.0f;
@@ -156,6 +156,10 @@ void	CR_proj(t_window *w, t_object *o)
 			CR_fill_trianglef(w, &(t_vec2){ trio[0].x, trio[0].y },
 								 &(t_vec2){ trio[1].x, trio[1].y },
 								 &(t_vec2){ trio[2].x, trio[2].y }, light);
+			if (draw_edges)
+				CR_draw_trianglef(w, &(t_vec2){ trio[0].x, trio[0].y },
+									&(t_vec2){ trio[1].x, trio[1].y },
+									&(t_vec2){ trio[2].x, trio[2].y }, 1.0f);
 		}
 	}
 }
