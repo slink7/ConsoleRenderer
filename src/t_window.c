@@ -28,7 +28,7 @@ void	normalize(t_window *w, t_vec2i *v, t_vec2 *out)
 }
 
 void	unnormalize(t_window *w, t_vec2 *v, t_vec2i *out) {
-	out->x = (int) round((v->x / 2.0f + 0.5f) * (float) w->width);
+	out->x = (int) round((v->x + 0.5f) * (float) w->width);
 	out->y = (int) round((v->y / 2.0f + 0.5f) * (float) w->height);
 }
 
