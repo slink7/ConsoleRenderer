@@ -15,7 +15,7 @@ void	print_link(t_link *link);
 void	push_back_link(t_link **link, void *data);
 void	push_front_link(t_link **link, void *data);
 void	*get_at_link(t_link *link, int i);
-void		**to_array_link(t_link *link);
+void	**to_array_link(t_link *link);
 int		get_length_link(t_link *link);
 
 #endif
