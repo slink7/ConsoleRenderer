@@ -44,7 +44,7 @@ t_window	*CR_new_window(int w, int h)
 	out->width = w;
 	out->height = h;
 	out->buffer = malloc(sizeof(char) * (out->width + 1) * (out->height));
-	CR_clear(out, '.');
+	CR_clear(out, ' ');
 	return out;
 }
 
@@ -63,7 +63,7 @@ void	CR_clear(t_window *w, char c)
 
 void	CR_present(t_window *w)
 {
-	write(1, "\e[1;1H\e[2J", 10);
+	write(1, "\e[1;1H", 6);
 	write(1, w->buffer, (w->width + 1) * w->height);
 }
 
